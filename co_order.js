@@ -34,6 +34,15 @@ window.addEventListener("load", function () {
 
       //calculate the cost of the order
       calcOrder();
+
+      //event handlers for the web form
+      orderForm.elements.model.onchange = calcOrder;
+      orderForm.elements.qty.onchange = calcOrder;
+
+      var planOptions = document.querySelectorAll('input[name="protection"]');
+      for (var i = 0; i < planOptions.length; i++) {
+            planOptions[i].onclick = calcOrder;
+      }
 });
 
 function calcOrder() {
@@ -41,15 +50,44 @@ function calcOrder() {
 
       //calculate the initial cost of the order
       var mIndex = orderForm.elements.model.selectedIndex;
-      var mCost = orderForm.elements.model.option[mIndex].value
+      var mCost = orderForm.elements.model.option[mIndex].value;
       var qIndex = orderForm.elements.qty.selectedIndex;
       var quantity = orderForm.elements.qty[qIndex].value;
 
       //intial cost = model x quantity
-      var initialCost = mCost + quantity;
-      orderForm.elements.initialCost.value = initialCost;
+      var initialCost = mCost * quantity;
+      orderForm.elements.initialCost.value = formatUSACurrency(initialCost);
 
       //retrieve the cost of the user's protetion plan
       var pCost = document.querySelector('input[name="protection"]:checked').value * quantity;
-      orderForm.elements.protectionCost.value = pCost;
+      orderForm.elements.protectionCost.value = formatNumber(pCost, 2);
+
+      //calculate the order subtotal
+      orderForm.elements.subtotal.value = formatNumber(initialCost + pCost, 2);
+
+      //caluclate the sales tax
+      var salesTax = 0.05 * (initialCost + pCost);
+      orderForm.elements.salesTax.value = formatNumber(salesTax, 2);
+
+      //calculate the cost of the total order
+      var totalCost = initialCost + pCost + salesTax;
+      orderForm.elements.totalCost.value = formatUSACurrency(totalCost);
+
+      //store the order details
+      orderForm.elements.modeName.value = orderForm.elements.model.options[mIndex].text;
+      orderForm.elements.protectionName.value = document.querySelector('input[name="protection"]:checked').nextSibiling.nodeValue;
+}
+
+function formatNumber(val, decimals) {
+      return val.toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+      });
+}
+
+function formatUSACurrency(val) {
+      return val.toLocaleString('en-US', {
+            style: "currency",
+            currency: "USD"
+      });
 }
