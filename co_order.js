@@ -48,34 +48,34 @@ window.addEventListener("load", function () {
 function calcOrder() {
       var orderForm = document.forms.orderForm;
 
-      //calculate the initial cost of the order
+      //calculates the initial cost of the order
       var mIndex = orderForm.elements.model.selectedIndex;
-      var mCost = orderForm.elements.model.option[mIndex].value;
+      var mCost = orderForm.elements.model.options[mIndex].value;
       var qIndex = orderForm.elements.qty.selectedIndex;
       var quantity = orderForm.elements.qty[qIndex].value;
 
-      //intial cost = model x quantity
+      //initial cost = model times quantity
       var initialCost = mCost * quantity;
-      orderForm.elements.initialCost.value = formatUSACurrency(initialCost);
+      orderForm.elements.initialCost.value = formatUSCurrency(initialCost);
 
-      //retrieve the cost of the user's protetion plan
+      //retrieve the cost of the user's protection plan
       var pCost = document.querySelector('input[name="protection"]:checked').value * quantity;
       orderForm.elements.protectionCost.value = formatNumber(pCost, 2);
 
       //calculate the order subtotal
       orderForm.elements.subtotal.value = formatNumber(initialCost + pCost, 2);
 
-      //caluclate the sales tax
+      //calculates the sale taxes
       var salesTax = 0.05 * (initialCost + pCost);
       orderForm.elements.salesTax.value = formatNumber(salesTax, 2);
 
-      //calculate the cost of the total order
+      //calculates the cost of the total order
       var totalCost = initialCost + pCost + salesTax;
-      orderForm.elements.totalCost.value = formatUSACurrency(totalCost);
+      orderForm.elements.totalCost.value = formatUSCurrency(totalCost);
 
-      //store the order details
-      orderForm.elements.modeName.value = orderForm.elements.model.options[mIndex].text;
-      orderForm.elements.protectionName.value = document.querySelector('input[name="protection"]:checked').nextSibiling.nodeValue;
+      //stores the order details
+      orderForm.elements.modelName.value = orderForm.elements.model.options[mIndex].text;
+      orderForm.elements.protectionName.value = document.querySelector('input[name="protection"]:checked').nextSibling.nodeValue;
 }
 
 function formatNumber(val, decimals) {
@@ -85,7 +85,7 @@ function formatNumber(val, decimals) {
       });
 }
 
-function formatUSACurrency(val) {
+function formatUSCurrency(val) {
       return val.toLocaleString('en-US', {
             style: "currency",
             currency: "USD"
